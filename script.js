@@ -19,8 +19,48 @@ function init(data) {
     handleMeetingState();
 }
 
-function loadMeeting() {
+function saveMeeting() {
+    let aElem = document.createElement("a");
+    aElem.href = URL.createObjectURL(new Blob([JSON.stringify(meetingData)], {type: "application/json"}));
+    aElem.download = meetingData.meetingName + ".json";
+    aElem.click();
+}
 
+function loadMeeting() {
+    let inputElem = document.createElement("input");
+    inputElem.type = "file";
+    inputElem.accept = "application/json";
+    inputElem.onchange = e => {
+        let reader = new FileReader();
+        reader.readAsText(e.target.files[0]);
+        reader.onload = rE => {
+            let json = rE.target.result;
+
+            try {
+                json = JSON.parse(json);
+
+                if (!validateDataObject(json)) {
+                    throw new Error("Validation failed");
+                }
+
+                init(json);
+            } catch (ex) {
+                alert("Invalid file supplied!");
+            }
+        };
+    };
+
+    inputElem.click();
+}
+
+function validateDataObject(data) {
+    for (let prop of Object.keys(dataTemplate)) {
+        if (!data.hasOwnProperty(prop)) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 /**
