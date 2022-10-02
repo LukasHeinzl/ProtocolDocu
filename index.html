@@ -6,16 +6,17 @@
               content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <link href="style.css" type="text/css" rel="stylesheet"/>
+        <script src="script.js"></script>
         <title>ProtocolDocu | LukasHeinzl</title>
     </head>
-    <body>
+    <body onload="init(dataTemplate);">
         <header>
-            <h1>Meeting</h1>
+            <h1>Meeting - <span id="meetingName"></span> (<span id="meetingDate"></span>)</h1>
 
             <section>
-                <button>Load</button>
-                <button>Save</button>
-                <button>Rename</button>
+                <button id="loadBtn">Load</button>
+                <button id="saveBtn">Save</button>
+                <button onclick="renameMeeting();">Rename</button>
             </section>
         </header>
 
@@ -26,14 +27,14 @@
 
             <aside>
                 <section>
-                    <button>Start</button>
-                    <button>Pause</button>
-                    <button>Highlight</button>
+                    <button id="startEndBtn" onclick="startEndMeeting();">Start</button>
+                    <button id="pauseResumeBtn" onclick="pauseResumeMeeting();">Pause</button>
+                    <button id="highlightBtn" disabled>Highlight</button>
                 </section>
 
                 <section>
                     <input type="text" aria-label="Attendant name" placeholder="Attendant name">
-                    <button>Add attendant</button>
+                    <button id="addAttendantBtn">Add attendant</button>
                 </section>
 
                 <section>
