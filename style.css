@@ -68,3 +68,20 @@ button {
 #attendanceList > div > button:first-of-type {
     flex: 1;
 }
+
+#protocolList > li {
+    list-style-type: none;
+    display: grid;
+    grid-template-columns: 1fr 3fr 25fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+#protocolList > li > div:not(:last-child) {
+    display: flex;
+    align-items: center;
+}
+
+textarea {
+    resize: none;
+}

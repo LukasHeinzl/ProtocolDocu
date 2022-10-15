@@ -5,7 +5,7 @@ const dataTemplate = {
     endTime: null,
     paused: false,
     attendanceList: [], // array of strings containing the attendees names
-    protocol: [] // array of objects of the following structure: {time: string, text: string, removable: boolean}
+    protocol: [] // array of objects of the following structure: {time: string, who: string, text: string, highlight: boolean}
 };
 
 let meetingData;
@@ -18,6 +18,7 @@ function init(data) {
 
     handleMeetingState();
     renderAttendanceList();
+    renderProtocolList();
 }
 
 function saveMeeting() {
@@ -96,18 +97,19 @@ function handleMeetingState() {
 function startEndMeeting() {
     if (meetingData.startTime === null) {
         meetingData.startTime = new Date().toLocaleTimeString();
+        addProtocolEntry(meetingData.startTime, "", "Meeting started", false);
     } else {
         meetingData.endTime = new Date().toLocaleTimeString();
+        addProtocolEntry(meetingData.endTime, "", "Meeting ended", false);
     }
 
     handleMeetingState();
-    //TODO: add protocol entry
 }
 
 function pauseResumeMeeting() {
     meetingData.paused = !meetingData.paused;
     handleMeetingState();
-    //TODO: add protocol entry
+    addProtocolEntry(new Date().toLocaleTimeString(), "", "Meeting " + (meetingData.paused ? "paused" : "resumed"), false);
 }
 
 function renameMeeting() {
@@ -116,6 +118,34 @@ function renameMeeting() {
     if (newName) {
         meetingData.meetingName = newName;
         document.getElementById("meetingName").innerText = newName;
+    }
+}
+
+function addProtocolEntry(time, who, text, highlight, checkCurrentEntry = true) {
+    if (checkCurrentEntry) {
+        saveCurrentEntry();
+    }
+
+    meetingData.protocol.push({time, who, text, highlight});
+    renderProtocolList();
+}
+
+function renderProtocolList() {
+    let list = document.getElementById("protocolList");
+    list.innerHTML = "";
+
+    for (let entry of meetingData.protocol) {
+        let entryElem = document.createElement("li");
+        let time = document.createElement("div");
+        let who = document.createElement("div");
+        let text = document.createElement("div");
+
+        time.innerText = entry.time;
+        who.innerText = entry.who;
+        text.innerText = entry.text;
+
+        entryElem.append(time, who, text);
+        list.append(entryElem);
     }
 }
 
@@ -147,10 +177,50 @@ function renderAttendanceList() {
         let removeBtn = document.createElement("button");
 
         nameBtn.innerText = entry;
+        nameBtn.onclick = () => startNewProtocolEntry(entry);
         removeBtn.innerText = "X";
         removeBtn.onclick = () => removeAttendant(i);
 
         entryElem.append(nameBtn, removeBtn);
         list.append(entryElem);
     }
+}
+
+function startNewProtocolEntry(who = "") {
+    if (meetingData.endTime !== null) {
+        return;
+    }
+
+    saveCurrentEntry();
+    let entryElem = document.createElement("li");
+    let timeElem = document.createElement("div");
+    let whoElem = document.createElement("div");
+    let textElem = document.createElement("textarea");
+
+    entryElem.id = "currentEntry";
+
+    timeElem.innerText = new Date().toLocaleTimeString();
+    whoElem.innerText = who;
+    textElem.setAttribute("aria-label", "Current protocol entry");
+    textElem.rows = 10;
+
+    entryElem.setAttribute("pd-time", timeElem.innerText);
+    entryElem.setAttribute("pd-who", who);
+
+    entryElem.append(timeElem, whoElem, textElem);
+    document.getElementById("protocolList").append(entryElem);
+    textElem.focus();
+}
+
+function saveCurrentEntry() {
+    let entry = document.getElementById("currentEntry");
+
+    if (entry === null) {
+        return;
+    }
+
+    let time = entry.getAttribute("pd-time");
+    let who = entry.getAttribute("pd-who");
+    let text = entry.getElementsByTagName("textarea")[0].value;
+    addProtocolEntry(time, who, text, false, false);
 }
