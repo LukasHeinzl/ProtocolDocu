@@ -33,16 +33,15 @@
                 </section>
 
                 <section>
-                    <input type="text" aria-label="Attendant name" placeholder="Attendant name">
-                    <button id="addAttendantBtn">Add attendant</button>
+                    <input type="text" aria-label="Attendant name" placeholder="Attendant name" id="attendantName"
+                           onchange="addAttendant();">
+                    <button onclick="addAttendant();">Add attendant</button>
                 </section>
 
                 <section>
                     <span class="heading">Attendance list</span>
 
-                    <div>
-
-                    </div>
+                    <div id="attendanceList"></div>
                 </section>
             </aside>
         </main>

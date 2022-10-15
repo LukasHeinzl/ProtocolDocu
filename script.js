@@ -17,6 +17,7 @@ function init(data) {
     document.getElementById("meetingDate").innerText = meetingData.meetingDate;
 
     handleMeetingState();
+    renderAttendanceList();
 }
 
 function saveMeeting() {
@@ -115,5 +116,41 @@ function renameMeeting() {
     if (newName) {
         meetingData.meetingName = newName;
         document.getElementById("meetingName").innerText = newName;
+    }
+}
+
+function addAttendant() {
+    let name = document.getElementById("attendantName");
+
+    if (name.value.trim() === "") {
+        return;
+    }
+
+    meetingData.attendanceList.push(name.value);
+    name.value = "";
+    renderAttendanceList();
+}
+
+function removeAttendant(i) {
+    meetingData.attendanceList.splice(i, 1);
+    renderAttendanceList();
+}
+
+function renderAttendanceList() {
+    let list = document.getElementById("attendanceList");
+    list.innerHTML = "";
+
+    for (let i = 0; i < meetingData.attendanceList.length; i++) {
+        let entry = meetingData.attendanceList[i];
+        let entryElem = document.createElement("div");
+        let nameBtn = document.createElement("button");
+        let removeBtn = document.createElement("button");
+
+        nameBtn.innerText = entry;
+        removeBtn.innerText = "X";
+        removeBtn.onclick = () => removeAttendant(i);
+
+        entryElem.append(nameBtn, removeBtn);
+        list.append(entryElem);
     }
 }

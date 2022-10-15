@@ -55,3 +55,16 @@ button {
     font-size: 1.2rem;
     padding: 0.3rem 0.7rem;
 }
+
+
+#attendanceList > div {
+    display: flex;
+}
+
+#attendanceList > div > button {
+    font-size: 0.7rem;
+}
+
+#attendanceList > div > button:first-of-type {
+    flex: 1;
+}
