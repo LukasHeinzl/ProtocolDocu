@@ -99,6 +99,9 @@ function startEndMeeting() {
     if (meetingData.startTime === null) {
         meetingData.startTime = new Date().toLocaleTimeString();
         addProtocolEntry(meetingData.startTime, "", "Meeting started", false);
+
+        let attendeesFromTheStart = meetingData.attendanceList.filter(e => e.currentlyAttending).map(e => e.name).join(", ");
+        addProtocolEntry(meetingData.startTime, "", "In attendance: " + attendeesFromTheStart, false);
     } else {
         meetingData.endTime = new Date().toLocaleTimeString();
         addProtocolEntry(meetingData.endTime, "", "Meeting ended", false);
@@ -151,6 +154,10 @@ function renderProtocolList() {
 }
 
 function addAttendant() {
+    if (meetingData.endTime !== null) {
+        return;
+    }
+
     let name = document.getElementById("attendantName");
 
     if (name.value.trim() === "") {
@@ -163,6 +170,10 @@ function addAttendant() {
 }
 
 function removeAttendant(i) {
+    if (meetingData.endTime !== null) {
+        return;
+    }
+
     meetingData.attendanceList.splice(i, 1);
     renderAttendanceList();
 }
@@ -175,15 +186,33 @@ function renderAttendanceList() {
         let entry = meetingData.attendanceList[i];
         let entryElem = document.createElement("div");
         let nameBtn = document.createElement("button");
+        let attendingBtn = document.createElement("button");
         let removeBtn = document.createElement("button");
 
         nameBtn.innerText = entry.name;
         nameBtn.onclick = () => startNewProtocolEntry(entry.name);
+        attendingBtn.innerHTML = "&#8676;";
+        attendingBtn.onclick = () => changeAttendanceStatus(attendingBtn, entry);
+        attendingBtn.classList.add("attendingBtn");
         removeBtn.innerText = "X";
         removeBtn.onclick = () => removeAttendant(i);
 
-        entryElem.append(nameBtn, removeBtn);
+        entryElem.append(nameBtn, attendingBtn, removeBtn);
         list.append(entryElem);
+    }
+}
+
+function changeAttendanceStatus(btn, entry) {
+    if (meetingData.endTime !== null) {
+        return;
+    }
+
+    entry.currentlyAttending = !entry.currentlyAttending;
+    btn.innerHTML = entry.currentlyAttending ? "&#8676;" : "&#8677;";
+
+    if (meetingData.startTime !== null) {
+        let text = entry.currentlyAttending ? " is now attending." : " is no longer attending.";
+        addProtocolEntry(new Date().toLocaleTimeString(), "", entry.name + text);
     }
 }
 

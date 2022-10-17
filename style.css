@@ -69,6 +69,10 @@ button {
     flex: 1;
 }
 
+#attendanceList > div > button.attendingBtn {
+    font-size: 1.5rem;
+}
+
 #protocolList > li {
     list-style-type: none;
     display: grid;
