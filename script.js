@@ -16,6 +16,8 @@ function init(data) {
     document.getElementById("meetingName").innerText = meetingData.meetingName;
     document.getElementById("meetingDate").innerText = meetingData.meetingDate;
 
+    document.getElementById("highlightBtn").disabled = true;
+
     handleMeetingState();
     renderAttendanceList();
     renderProtocolList();
@@ -144,6 +146,7 @@ function renderProtocolList() {
         let who = document.createElement("div");
         let text = document.createElement("div");
 
+        entryElem.onclick = () => selectEntry(entryElem);
         time.innerText = entry.time;
         who.innerText = entry.who;
         text.innerText = entry.text;
@@ -228,6 +231,7 @@ function startNewProtocolEntry(who = "") {
     let textElem = document.createElement("textarea");
 
     entryElem.id = "currentEntry";
+    selectEntry(entryElem);
 
     timeElem.innerText = new Date().toLocaleTimeString();
     whoElem.innerText = who;
@@ -253,4 +257,27 @@ function saveCurrentEntry() {
     let who = entry.getAttribute("pd-who");
     let text = entry.getElementsByTagName("textarea")[0].value;
     addProtocolEntry(time, who, text, false, false);
+    document.getElementById("highlightBtn").disabled = true;
+}
+
+function selectEntry(elem) {
+    let entry = document.getElementById("currentEntry");
+
+    if (entry !== null) {
+        // cannot select another entry while one is being edited
+        return;
+    }
+
+    document.getElementById("highlightBtn").disabled = true;
+
+    let currentSelectedEntry = document.querySelector(".selectedEntry");
+
+    if (currentSelectedEntry !== null) {
+        currentSelectedEntry.classList.remove("selectedEntry");
+    }
+
+    if (elem !== currentSelectedEntry) {
+        elem.classList.add("selectedEntry");
+        document.getElementById("highlightBtn").disabled = false;
+    }
 }

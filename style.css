@@ -79,6 +79,7 @@ button {
     grid-template-columns: 1fr 3fr 25fr;
     gap: 1rem;
     margin-bottom: 1rem;
+    user-select: none;
 }
 
 #protocolList > li > div:not(:last-child) {
@@ -86,6 +87,18 @@ button {
     align-items: center;
 }
 
+#protocolList > li:not(#currentEntry) {
+    cursor: pointer;
+}
+
+#protocolList > li:not(#currentEntry):hover {
+    font-style: italic;
+}
+
 textarea {
     resize: none;
+}
+
+.selectedEntry {
+    border: 1px solid red;
 }
