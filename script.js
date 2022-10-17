@@ -42,7 +42,8 @@ function loadMeeting() {
                 json = JSON.parse(json);
 
                 if (!validateDataObject(json)) {
-                    throw new Error("Validation failed");
+                    alert("Invalid file supplied!");
+                    return;
                 }
 
                 init(json);
