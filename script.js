@@ -140,13 +140,20 @@ function renderProtocolList() {
     let list = document.getElementById("protocolList");
     list.innerHTML = "";
 
-    for (let entry of meetingData.protocol) {
+    for (let i = 0; i < meetingData.protocol.length; i++) {
+        let entry = meetingData.protocol[i];
         let entryElem = document.createElement("li");
         let time = document.createElement("div");
         let who = document.createElement("div");
         let text = document.createElement("div");
 
         entryElem.onclick = () => selectEntry(entryElem);
+        entryElem.setAttribute("pd-idx", i);
+
+        if (entry.highlight) {
+            entryElem.classList.add("highlighted");
+        }
+
         time.innerText = entry.time;
         who.innerText = entry.who;
         text.innerText = entry.text;
@@ -231,6 +238,7 @@ function startNewProtocolEntry(who = "") {
     let textElem = document.createElement("textarea");
 
     entryElem.id = "currentEntry";
+    entryElem.setAttribute("pd-highlight", "false");
     selectEntry(entryElem);
 
     timeElem.innerText = new Date().toLocaleTimeString();
@@ -256,7 +264,8 @@ function saveCurrentEntry() {
     let time = entry.getAttribute("pd-time");
     let who = entry.getAttribute("pd-who");
     let text = entry.getElementsByTagName("textarea")[0].value;
-    addProtocolEntry(time, who, text, false, false);
+    let highlight = entry.getAttribute("pd-highlight") === "true";
+    addProtocolEntry(time, who, text, highlight, false);
     document.getElementById("highlightBtn").disabled = true;
 }
 
@@ -268,7 +277,8 @@ function selectEntry(elem) {
         return;
     }
 
-    document.getElementById("highlightBtn").disabled = true;
+    let btn = document.getElementById("highlightBtn");
+    btn.disabled = true;
 
     let currentSelectedEntry = document.querySelector(".selectedEntry");
 
@@ -278,6 +288,46 @@ function selectEntry(elem) {
 
     if (elem !== currentSelectedEntry) {
         elem.classList.add("selectedEntry");
-        document.getElementById("highlightBtn").disabled = false;
+        btn.disabled = false;
+
+        let isCurrentlyHighlighted;
+
+        if (elem.id === "currentEntry") {
+            isCurrentlyHighlighted = elem.getAttribute("pd-highlight") === "true";
+        } else {
+            let idx = parseInt(elem.getAttribute("pd-idx"));
+            let entry = meetingData.protocol[idx];
+            isCurrentlyHighlighted = entry.highlight;
+        }
+
+        btn.innerText = isCurrentlyHighlighted ? "Remove highlight" : "Highlight";
+    }
+}
+
+function toggleHighlight() {
+    let currentSelectedEntry = document.querySelector(".selectedEntry");
+
+    if (currentSelectedEntry === null) {
+        return;
+    }
+
+    let isNowHighlighted;
+
+    if (currentSelectedEntry.id === "currentEntry") {
+        isNowHighlighted = currentSelectedEntry.getAttribute("pd-highlight") !== "true";
+        currentSelectedEntry.setAttribute("pd-highlight", isNowHighlighted);
+    } else {
+        let idx = parseInt(currentSelectedEntry.getAttribute("pd-idx"));
+        let entry = meetingData.protocol[idx];
+        entry.highlight = !entry.highlight;
+        isNowHighlighted = entry.highlight;
+    }
+
+    document.getElementById("highlightBtn").innerText = isNowHighlighted ? "Remove highlight" : "Highlight";
+
+    if (isNowHighlighted) {
+        currentSelectedEntry.classList.add("highlighted");
+    } else {
+        currentSelectedEntry.classList.remove("highlighted");
     }
 }

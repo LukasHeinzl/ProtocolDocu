@@ -95,6 +95,10 @@ button {
     font-style: italic;
 }
 
+#protocolList > li.highlighted {
+    background: aqua;
+}
+
 textarea {
     resize: none;
 }
