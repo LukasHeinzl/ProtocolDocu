@@ -4,7 +4,7 @@ const dataTemplate = {
     startTime: null,
     endTime: null,
     paused: false,
-    attendanceList: [], // array of strings containing the attendees names
+    attendanceList: [], // array of objects of the following structure: {name: string, currentlyAttending: boolean}
     protocol: [] // array of objects of the following structure: {time: string, who: string, text: string, highlight: boolean}
 };
 
@@ -156,7 +156,7 @@ function addAttendant() {
         return;
     }
 
-    meetingData.attendanceList.push(name.value);
+    meetingData.attendanceList.push({name: name.value, currentlyAttending: true});
     name.value = "";
     renderAttendanceList();
 }
@@ -176,8 +176,8 @@ function renderAttendanceList() {
         let nameBtn = document.createElement("button");
         let removeBtn = document.createElement("button");
 
-        nameBtn.innerText = entry;
-        nameBtn.onclick = () => startNewProtocolEntry(entry);
+        nameBtn.innerText = entry.name;
+        nameBtn.onclick = () => startNewProtocolEntry(entry.name);
         removeBtn.innerText = "X";
         removeBtn.onclick = () => removeAttendant(i);
 
