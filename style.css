@@ -16,7 +16,7 @@ body {
 header {
     padding: 1rem;
     border-bottom: 1px solid black;
-    height: 12vh;
+    height: 7.5rem;
 }
 
 main {
@@ -37,6 +37,7 @@ ul {
 aside {
     border-left: 1px solid black;
     padding: 1rem;
+    overflow-y: scroll;
 }
 
 aside section {
